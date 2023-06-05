@@ -6,7 +6,11 @@ import com.example.collectionsandsets.exception.EmployeeStorageIsFullException;
 import com.example.collectionsandsets.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
 public class EmployeeService {
@@ -14,14 +18,17 @@ public class EmployeeService {
     private final Map<String, Employee> employees;
 
     public EmployeeService() {
+        Employee employees1 = new Employee("Inna", "Ivaniva", 2222, 2);
+        Employee employees2 = new Employee("Anna", "Olegovna", 3333, 2);
+        Employee employees3 = new Employee("Janna", "Sergeevna", 4444, 1);
         this.employees = new HashMap<>();
     }
 
-    public Employee add(String firstName, String lastName) {
+    public Employee add(String firstName, String lastName, double salary, int department) {
         if (employees.size() >= MAX_SIZE) {
             throw new EmployeeStorageIsFullException();
         }
-        Employee employeeToAdd = new Employee(firstName, lastName);
+        Employee employeeToAdd = new Employee(firstName, lastName, salary, department);
         if (employees.containsKey(employeeToAdd.getFullName())) {
             throw new EmployeeAlreadyAddedException();
         }
@@ -29,8 +36,8 @@ public class EmployeeService {
         return employeeToAdd;
     }
 
-    public Employee remove(String firstName, String lastName) {
-        Employee employeeToRemove = new Employee(firstName, lastName);
+    public Employee remove(String firstName, String lastName, double salary, int department) {
+        Employee employeeToRemove = new Employee(firstName, lastName, salary, department);
         if (!employees.containsKey(employeeToRemove.getFullName())) {
             throw new EmployeeNotFoundException();
         }
