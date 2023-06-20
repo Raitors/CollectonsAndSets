@@ -1,6 +1,10 @@
 package com.example.collectionsandsets.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.capitalize;
 
 public class Employee {
     private final String firstName;
@@ -9,8 +13,8 @@ public class Employee {
     private final int department;
 
     public Employee(String firstName, String lastName, double salary, int department) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = capitalize(firstName.toLowerCase());
+        this.lastName = capitalize(lastName.toLowerCase());
         this.salary = salary;
         this.department = department;
     }
@@ -36,6 +40,7 @@ public class Employee {
         return firstName + " " + lastName;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,9 +56,8 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
+        return "Employee{" + "firstName='" + firstName + '\'' + ", lastName='" + lastName + '\'' + '}';
     }
+
+
 }
