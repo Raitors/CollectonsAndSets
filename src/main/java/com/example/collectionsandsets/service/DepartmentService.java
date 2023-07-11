@@ -4,7 +4,6 @@ import com.example.collectionsandsets.exception.EmployeeNotFoundException;
 import com.example.collectionsandsets.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,17 +16,26 @@ public class DepartmentService {
         this.employeeService = employeeService;
     }
 
-    public Employee getEmploteeWithMaxSalary(int department) {
+    public double getEmployeesSalarySum(int department) {
         return employeeService.getAll().stream()
-                .filter(employee -> employee.getDepartment() == department)
-                .max(Comparator.comparingDouble(Employee::getSalary))
+                .filter(e -> e.getDepartment() == department)
+                .mapToDouble(Employee::getSalary)
+                .sum();
+    }
+
+    public double getEmployeeMaxSalary(int department) {
+        return employeeService.getAll().stream()
+                .filter(e -> e.getDepartment() == department)
+                .mapToDouble(Employee::getSalary)
+                .max()
                 .orElseThrow(EmployeeNotFoundException::new);
     }
 
-    public Employee getEmploteeWithMinSalary(int department) {
+    public double getEmployeeMinSalary(int department) {
         return employeeService.getAll().stream()
                 .filter(employee -> employee.getDepartment() == department)
-                .min(Comparator.comparingDouble(Employee::getSalary))
+                .mapToDouble(Employee::getSalary)
+                .min()
                 .orElseThrow(EmployeeNotFoundException::new);
     }
 

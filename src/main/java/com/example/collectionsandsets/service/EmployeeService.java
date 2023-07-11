@@ -3,77 +3,61 @@ package com.example.collectionsandsets.service;
 import com.example.collectionsandsets.exception.EmployeeAlreadyAddedException;
 import com.example.collectionsandsets.exception.EmployeeNotFoundException;
 import com.example.collectionsandsets.exception.EmployeeStorageIsFullException;
-import com.example.collectionsandsets.exception.InvalidInputException;
 import com.example.collectionsandsets.model.Employee;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.*;
+import java.util.*;
 
 
 @Service
 public class EmployeeService {
-    private static final int MAX_SIZE = 5;
-    private final Map<String, Employee> employees;
+    private static final int MAX_LIMIT = 5;
+    private final Map<String, Employee> employees = new HashMap<>(MAX_LIMIT);
 
     public EmployeeService() {
-        Employee employees1 = new Employee("Inna", "Ivaniva", 2222, 2);
-        Employee employees2 = new Employee("Anna", "Olegovna", 3333, 2);
-        Employee employees3 = new Employee("Janna", "Sergeevna", 4444, 1);
-        this.employees = new HashMap<>();
+        Employee employee1 = new Employee("iv", "iva", 1, 1111);
+        Employee employee2 = new Employee("ol", "ola", 1, 2222);
+        Employee employee3 = new Employee("az", "aza", 2, 333);
+        Employee employee4 = new Employee("es", "esa", 2, 444);
+      /*  employees.put(createKey(employee1), employee1);
+        employees.put(createKey(employee2), employee2);
+        employees.put(createKey(employee3), employee3);
+        employees.put(createKey(employee4), employee4);*/
+
     }
 
-    private static boolean correctName(String firstName, String lastName) {
-        return isAlpha(firstName) && isAlpha(lastName);
+    private static String createKey(Employee employee) {
+        return createKey(employee.getFirstName(), employee.getLastName());
     }
 
-    public Employee add(String firstName, String lastName, double salary, int department) {
-        if (!correctName(firstName, lastName)) {
-            throw new InvalidInputException();
-        }
+    private static String createKey(String firstName, String lastName) {
+        return (firstName + lastName).toLowerCase();
+    }
 
-        if (employees.size() >= MAX_SIZE) {
+    public List<Employee> getAll() {
+        return Collections.unmodifiableList(new ArrayList<>(employees.values()));
+    }
+
+    public Employee add(Employee employee) {
+        if (employees.size() >= MAX_LIMIT) {
             throw new EmployeeStorageIsFullException();
         }
-        Employee employeeToAdd = new Employee(firstName, lastName, salary, department);
-        if (employees.containsKey(employeeToAdd.getFullName())) {
+        if (employees.containsKey(createKey(employee))) {
             throw new EmployeeAlreadyAddedException();
         }
-        employees.put(employeeToAdd.getFullName(), employeeToAdd);
-        return employeeToAdd;
+        employees.put(createKey(employee), employee);
+        return employee;
     }
 
-    public Employee remove(String firstName, String lastName, double salary, int department) {
-        if (!correctName(firstName, lastName)) {
-            throw new InvalidInputException();
-        }
-        Employee employeeToRemove = new Employee(firstName, lastName, salary, department);
-        if (!employees.containsKey(employeeToRemove.getFullName())) {
-            throw new EmployeeNotFoundException();
-        }
-        employees.remove(employeeToRemove.getFullName(), employeeToRemove);
-        return employeeToRemove;
-    }
+    public Employee remove(String firstName, String lastName) {
+        return employees.remove(createKey(firstName, lastName));
 
-    public Collection<Employee> getAll() {
-        return Collections.unmodifiableCollection(employees.values());
     }
 
     public Employee find(String firstName, String lastName) {
-        if (!correctName(firstName, lastName)) {
-            throw new InvalidInputException();
+        if (!employees.containsKey((createKey(firstName, lastName)))) {
+            throw new EmployeeNotFoundException();
         }
-        for (Employee employee : employees.values()) {
-            if (firstName.equalsIgnoreCase(employee.getFirstName())
-                    && lastName.equalsIgnoreCase(employee.getLastName())) {
-                return employee;
-            }
-        }
-        throw new EmployeeNotFoundException();
+        return employees.get(createKey(firstName, lastName));
     }
 }
